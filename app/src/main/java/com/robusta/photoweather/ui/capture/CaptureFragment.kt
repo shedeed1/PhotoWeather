@@ -1,27 +1,35 @@
-package com.robusta.photoweather.ui
+package com.robusta.photoweather.ui.capture
 
-import android.graphics.Camera
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.otaliastudios.cameraview.BitmapCallback
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.PictureResult
+import com.robusta.photoweather.CAPTURE_TO_RESULT_PICTURE
+import com.robusta.photoweather.CAPTURE_TO_RESULT_PICTURE_URI
 import com.robusta.photoweather.R
 import com.robusta.photoweather.data.response.WeatherResponse
-import com.robusta.photoweather.databinding.ActivityMainBinding
 import com.robusta.photoweather.databinding.FragmentCaptureBinding
 import com.robusta.photoweather.getViewModel
 import com.robusta.photoweather.utilities.LocationUtil
 import com.robusta.photoweather.utilities.PermissionUtil
 import com.robusta.photoweather.viewmodel.WeatherViewModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.*
+
 
 /**
  * A simple [Fragment] subclass.
@@ -46,12 +54,12 @@ class CaptureFragment : Fragment() {
                     val vm by lazy {
                         getViewModel {
                             WeatherViewModel(
-                                it.latitude,it.longitude
+                                it.latitude, it.longitude
                             )
                         }
                     }
 
-                    vm.getWeather().observe(viewLifecycleOwner, Observer<WeatherResponse>{
+                    vm.getWeather().observe(viewLifecycleOwner, Observer<WeatherResponse> {
                         // Capture picture
 
                         binding.cityName.text = it.list.get(0).name
@@ -75,8 +83,7 @@ class CaptureFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1111 -> {
-                if (PermissionUtil.isLocationPermissionGranted(activity))
-                {
+                if (PermissionUtil.isLocationPermissionGranted(activity)) {
                     LocationUtil.getCurrentLocation(activity as AppCompatActivity) {
                         it?.run {
                             // TODO
@@ -84,8 +91,7 @@ class CaptureFragment : Fragment() {
                             LocationUtil.stopCurrentLocationUpdates(activity as AppCompatActivity)
                         }
                     }
-                }
-                else {
+                } else {
                     // TODO: Handle failing to get permissions
                 }
 
@@ -118,8 +124,21 @@ class CaptureFragment : Fragment() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
             result.toBitmap(BitmapCallback {
+                val uri = saveImageToInternalStorage(it!!)
                 val bundle = Bundle()
-                bundle.putParcelable("PICTURE",it)
+                bundle.putParcelable(CAPTURE_TO_RESULT_PICTURE, it)
+                bundle.putString(CAPTURE_TO_RESULT_PICTURE_URI, uri.toString())
+
+//                val intent = Intent()
+//                intent.action = Intent.ACTION_SEND
+//                intent.putExtra(Intent.EXTRA_STREAM, uri)
+//                intent.type = "image/jpeg"
+//
+//                val shareIntent = Intent.createChooser(intent, "Share File")
+//                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//
+//
+//                startActivity(shareIntent)
                 findNavController(this@CaptureFragment).navigate(R.id.action_captureFragment_to_resultFragment, bundle)
             })
         }
@@ -128,5 +147,42 @@ class CaptureFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun saveImageToInternalStorage(image: Bitmap): Uri {
+
+        // Initializing a new file
+        // The bellow line return a directory in internal storage
+        var file = context?.cacheDir
+
+        // Create a file to save the image
+        file = File(file, "${UUID.randomUUID()}.jpeg")
+
+        try {
+            // Get the file output stream
+            val stream: OutputStream = FileOutputStream(file)
+
+            // Compress bitmap
+            image.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+
+            // Flush the stream
+            stream.flush()
+
+            // Close stream
+            stream.close()
+        } catch (e: IOException){ // Catch the exception
+            e.printStackTrace()
+        }
+
+        // Return the saved image uri
+//        Log.i("Shedeed", file.absolutePath)
+//        var files = File(file.parent)
+//
+//        for (file in files.listFiles())
+//        {
+//            Log.i("Shedeed",file.absolutePath)
+//        }
+        return FileProvider.getUriForFile(requireContext(),"com.robusta.photoweather.fileprovider",file)
+        //return Uri.parse(file.absolutePath)
     }
 }

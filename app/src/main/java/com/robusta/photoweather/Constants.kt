@@ -1,4 +1,4 @@
 package com.robusta.photoweather
 
-const val DATABASE_NAME = "photoweather-db"
-const val DATABASE_SOURCE = "history.json"
+const val CAPTURE_TO_RESULT_PICTURE = "CAPTURE_TO_RESULT_PICTURE"
+const val CAPTURE_TO_RESULT_PICTURE_URI = "CAPTURE_TO_RESULT_PICTURE_URI"

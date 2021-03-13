@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigationBar()
     }
 
-
-
     /**
      * Called on first creation and when restoring state.
      */

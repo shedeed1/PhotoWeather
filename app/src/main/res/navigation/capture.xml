@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/captureFragment"
-        android:name="com.robusta.photoweather.ui.CaptureFragment"
+        android:name="com.robusta.photoweather.ui.capture.CaptureFragment"
         android:label="fragment_capture"
         tools:layout="@layout/fragment_capture" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/resultFragment"
-        android:name="com.robusta.photoweather.ui.ResultFragment"
+        android:name="com.robusta.photoweather.ui.capture.ResultFragment"
         android:label="fragment_result"
         tools:layout="@layout/fragment_result" />
 </navigation>
