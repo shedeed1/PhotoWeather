@@ -4,11 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.robusta.photoweather.R
 import com.robusta.photoweather.data.response.WeatherResponse
 import com.robusta.photoweather.databinding.ActivityMainBinding
 import com.robusta.photoweather.getViewModel
+import com.robusta.photoweather.setupWithNavController
 import com.robusta.photoweather.utilities.LocationUtil
 import com.robusta.photoweather.utilities.PermissionUtil
 import com.robusta.photoweather.viewmodel.WeatherViewModel
@@ -18,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var currentNavController: LiveData<NavController>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -25,68 +32,40 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val camera = binding.camera
-
-        camera.setLifecycleOwner(this)
-
-        binding.captureBtn.setOnClickListener {
-            requestLocation()
-        }
+        setupBottomNavigationBar()
     }
 
-    private fun requestLocation() {
-        if (!PermissionUtil.isLocationPermissionGranted(this))
-            PermissionUtil.requestLocationPermission(this@MainActivity, 1111)
-        else
-        {
-            LocationUtil.getCurrentLocation(this@MainActivity) {
 
-                it?.run {
-                    val vm by lazy {
-                        getViewModel {
-                            WeatherViewModel(
-                                it.latitude,it.longitude
-                            )
-                        }
-                    }
 
-                    vm.getWeather().observe(this@MainActivity, Observer<WeatherResponse>{
-                        binding.textView.text = it.list.get(0).weather.get(0).description
-                    })
+    /**
+     * Called on first creation and when restoring state.
+     */
+    private fun setupBottomNavigationBar() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
-                    LocationUtil.stopCurrentLocationUpdates(this@MainActivity)
-                }
-            }
-        }
+        bottomNavigationView.itemIconTintList = null
+
+        val navGraphIds = listOf(
+            R.navigation.capture,
+            R.navigation.history
+        )
+
+        // Setup the bottom navigation view with a list of navigation graphs
+        val controller = bottomNavigationView.setupWithNavController(
+            navGraphIds = navGraphIds,
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.nav_host_container,
+            intent = intent
+        )
+
+        // Whenever the selected controller changes, setup the action bar.
+        controller.observe(this, Observer { navController ->
+            //home_top_label.text = navController.currentDestination?.label
+        })
+        currentNavController = controller
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1111 -> {
-                if (PermissionUtil.isLocationPermissionGranted(this))
-                {
-                    LocationUtil.getCurrentLocation(this@MainActivity) {
-                        it?.run {
-                            if (it.isFromMockProvider)
-                            //viewModel.displaySnackMsg(getString(R.string.fake_location_not_allowed))
-                            else
-                                Log.i("Test", it.latitude.toString());
-                            //viewModel.newPunch(it.latitude, it.longitude)
-
-                            LocationUtil.stopCurrentLocationUpdates(this@MainActivity)
-                        }
-                    }
-                }
-                else {
-                    // TODO: Handle failing to get permissions
-                }
-
-            }
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        return currentNavController?.value?.navigateUp() ?: false
     }
 }
