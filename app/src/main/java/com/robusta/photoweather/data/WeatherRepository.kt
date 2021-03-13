@@ -22,7 +22,7 @@ class WeatherRepository {
 
     fun getWeather(lat: Double,long: Double): MutableLiveData<WeatherResponse> {
         val weatherData = MutableLiveData<WeatherResponse>()
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = weatherService.getWeather(lat,long)
                 try {

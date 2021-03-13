@@ -1,23 +1,14 @@
 package com.robusta.photoweather.ui
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.robusta.photoweather.R
-import com.robusta.photoweather.data.response.WeatherResponse
 import com.robusta.photoweather.databinding.ActivityMainBinding
-import com.robusta.photoweather.getViewModel
 import com.robusta.photoweather.setupWithNavController
-import com.robusta.photoweather.utilities.LocationUtil
-import com.robusta.photoweather.utilities.PermissionUtil
-import com.robusta.photoweather.viewmodel.WeatherViewModel
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,9 +26,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigationBar()
     }
 
-    /**
-     * Called on first creation and when restoring state.
-     */
     private fun setupBottomNavigationBar() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
@@ -48,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             R.navigation.history
         )
 
-        // Setup the bottom navigation view with a list of navigation graphs
         val controller = bottomNavigationView.setupWithNavController(
             navGraphIds = navGraphIds,
             fragmentManager = supportFragmentManager,
@@ -56,9 +43,7 @@ class MainActivity : AppCompatActivity() {
             intent = intent
         )
 
-        // Whenever the selected controller changes, setup the action bar.
         controller.observe(this, Observer { navController ->
-            //home_top_label.text = navController.currentDestination?.label
         })
         currentNavController = controller
     }

@@ -7,15 +7,12 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
+import com.robusta.photoweather.LOCATION_PERMISSION
 
 
 object LocationUtil {
 
     private var mLocationCallback: LocationCallback? = null
-
-    private val TAG = LocationUtil::class.java.simpleName
-
-    const val REQUEST_CODE_LOCATION = 1111
 
     /**
      * This will be used only when provider has request and doing work to draw his marker on the map.
@@ -30,7 +27,7 @@ object LocationUtil {
     ) {
         // Permission Checks.
         if (!PermissionUtil.isLocationPermissionGranted(context)) {
-            PermissionUtil.requestLocationPermission(context, REQUEST_CODE_LOCATION)
+            PermissionUtil.requestLocationPermission(context, LOCATION_PERMISSION)
             return
         }
         val locationRequest = LocationRequest().apply {
@@ -56,13 +53,10 @@ object LocationUtil {
             mLocationCallback,
             Looper.myLooper()
         )
-
-        Log.i(TAG,"Current Location Updates STARTED Successfully.")
     }
 
     fun stopCurrentLocationUpdates(context: AppCompatActivity) =
         mLocationCallback?.let {
             getFusedLocationProviderClient(context)?.removeLocationUpdates(it)
-            Log.i(TAG,"Current Location Updates Stopped Successfully.")
         }
 }

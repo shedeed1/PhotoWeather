@@ -1,4 +1,4 @@
-package com.robusta.photoweather
+package com.robusta.photoweather.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -16,64 +16,93 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:text="Capture"
+            android:textColor="@color/primaryTextColor"
+            android:fontFamily="@font/montserrat_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.otaliastudios.cameraview.CameraView
-            android:id="@+id/camera"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loading_animationn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="32dp"
+            app:lottie_rawRes="@raw/loading"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/capture_btn" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="32dp"
-            android:keepScreenOn="true"
-            app:cameraAudio="off"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:elevation="2dp"
+            app:cardCornerRadius="7dp"
             app:layout_constraintBottom_toTopOf="@+id/capture_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
-
-            <androidx.cardview.widget.CardView
+            <com.otaliastudios.cameraview.CameraView
+                android:id="@+id/camera"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                android:alpha="0.5"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:cardUseCompatPadding="true"
-                app:contentPadding="8dp"
-                app:layout_drawOnPreview="true"
-                app:layout_drawOnPictureSnapshot="true">
+                android:layout_height="match_parent"
+                android:keepScreenOn="true"
+                app:cameraAudio="off">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:orientation="vertical"
-                    android:textAlignment="center">
 
-                    <TextView
-                        android:id="@+id/cityName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/camera_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.75"
+                    android:visibility="invisible"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="2dp"
+                    app:cardUseCompatPadding="true"
+                    app:contentPadding="8dp"
+                    app:layout_drawOnPictureSnapshot="true"
+                    app:layout_drawOnPreview="true">
 
-                    <TextView
-                        android:id="@+id/temperature"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        android:textAlignment="center">
 
-                    <TextView
-                        android:id="@+id/description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </com.otaliastudios.cameraview.CameraView>
+                        <TextView
+                            android:id="@+id/cityName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_light" />
+
+                        <TextView
+                            android:id="@+id/temperature"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_light" />
+
+                        <TextView
+                            android:id="@+id/description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_light" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </com.otaliastudios.cameraview.CameraView>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
